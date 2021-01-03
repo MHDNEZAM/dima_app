@@ -1,3 +1,4 @@
+import 'package:dima_app/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_app/screens/welcome_screen.dart';
 import 'package:dima_app/utilities/firebaseAuthentication.dart';
@@ -77,7 +78,7 @@ class PropertiesScreen extends StatelessWidget {
               ),
               RaisedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, WelcomeScreen.id);
+                  Navigator.pushNamed(context, ChatScreen.id);
                 },
                 color: Colors.deepPurple,
                 child: Padding(
