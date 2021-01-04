@@ -5,6 +5,8 @@ import 'package:dima_app/screens/sign_up_screen.dart';
 import 'package:dima_app/screens/properties_screen.dart';
 import 'package:dima_app/screens/chat_screen.dart';
 import 'package:dima_app/screens/test.dart';
+import 'package:dima_app/screens/detailOfHouse_screen.dart';
+import 'package:dima_app/screens/listOfHouse_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
         LoginScreen.id: (context) => LoginScreen(),
         SignUpScreen.id: (context) => SignUpScreen(),
         PropertiesScreen.id: (context) => PropertiesScreen(),
-        ChatScreen.id: (context) => ChatScreen(),
+        ListOfHouse.id: (context) => ListOfHouse(),
+
         //'test': (context) => CustomDialogBox(),
       },
     );
