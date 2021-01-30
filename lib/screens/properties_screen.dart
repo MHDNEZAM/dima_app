@@ -3,6 +3,7 @@ import 'package:dima_app/screens/listOfHouse_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dima_app/screens/welcome_screen.dart';
 import 'package:dima_app/utilities/firebaseAuthentication.dart';
+import 'package:dima_app/screens/home_screen.dart';
 
 class PropertiesScreen extends StatelessWidget {
   static const String id = 'properties_screen';
@@ -102,6 +103,22 @@ class PropertiesScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'ListOfHouse',
+                    style: TextStyle(fontSize: 25, color: Colors.white),
+                  ),
+                ),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40)),
+              ),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, HomeScreen.id);
+                },
+                color: Colors.deepPurple,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Home Screen',
                     style: TextStyle(fontSize: 25, color: Colors.white),
                   ),
                 ),
