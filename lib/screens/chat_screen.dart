@@ -79,6 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         'text': messageText,
                         'sender_UID': loggedInUser.uid,
                         'receiver_UID': receiverUID,
+                        'read': false,
                       });
                       messageText = '';
                     },
@@ -116,6 +117,7 @@ class MessagesStream extends StatelessWidget {
         }
         final messages = snapshot.data.docs.reversed;
         List<MessageBubble> messageBubbles = [];
+
         for (var message in messages) {
           final messageSender_UID = message.data()['sender_UID'] ?? '';
           final messageReceiver_UID = message.data()['receiver_UID'] ?? '';
@@ -127,6 +129,13 @@ class MessagesStream extends StatelessWidget {
             final messageText = message.data()['text'] ?? '';
             //final messageSender = message.data()['sender'] ?? '';
             final currentUser = loggedInUser.uid ?? '';
+
+            if (messageReceiver_UID == loggedInUser.uid &&
+                messageSender_UID == receiverUID) {
+              _firestore.collection("messages").doc(message.id).update({
+                'read': true,
+              });
+            }
 
             final messageBubble = MessageBubble(
               text: messageText,

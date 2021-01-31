@@ -54,7 +54,7 @@ Future<String> signInWithGoogle() async {
     var doc = await collectionRef.doc(user.uid).get();
     if (!doc.exists) {
       //doesn't exist
-      _firestore.collection('users').add({
+      _firestore.collection("users").doc(user.uid).set({
         'uid': user.uid,
         'name': user.email.split('@')[0],
         'photo': 'assets/images/profile/Male.png',

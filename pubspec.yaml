@@ -42,6 +42,7 @@ dependencies:
   carousel_slider: ^2.3.1
   shimmer: ^1.1.0
   flutter_slidable: ^0.5.4
+  multi_sort: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,7 +62,7 @@ flutter:
   assets:
     - assets/hotel/
     - assets/images/
-    - assets/images/profile
+    - assets/images/profile/
     - assets/icons/
     - assets/
   # An image asset can refer to one or more resolution-specific "variants", see

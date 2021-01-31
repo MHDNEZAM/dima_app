@@ -124,7 +124,7 @@ class HouseListData {
       reviews: 62,
       rating: 4.0,
       perNight: 60,
-      ownerId: 'CQA91qulfecjgiv2m9ME3C1dj1o2',
+      ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
     ),
     HouseListData(
       imagesList:
@@ -136,7 +136,7 @@ class HouseListData {
       reviews: 90,
       rating: 4.4,
       perNight: 170,
-      ownerId: 'CQA91qulfecjgiv2m9ME3C1dj1o2',
+      ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
     ),
     HouseListData(
       imagesList:
@@ -148,7 +148,7 @@ class HouseListData {
       reviews: 240,
       rating: 4.5,
       perNight: 200,
-      ownerId: 'CQA91qulfecjgiv2m9ME3C1dj1o2',
+      ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
     ),
   ];
 }

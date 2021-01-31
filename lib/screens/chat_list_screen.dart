@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'chat_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -61,6 +62,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
 class MessagesListStream extends StatelessWidget {
   MessagesListStream();
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -72,80 +74,79 @@ class MessagesListStream extends StatelessWidget {
           return TextField();
         }
         return StreamBuilder(
-            stream: _firestore.collection('messages').snapshots(),
+            stream: _firestore
+                .collection('messages')
+                .orderBy('sent_time')
+                .snapshots(),
             builder: (context, snapshot2) {
               if (!snapshot2.hasData) {
                 //todo
                 return TextField();
               }
+              List<ChatListViewItem> chatListViewItem = [];
 
               final users = snapshot1.data.docs;
               final messages = snapshot2.data.docs.reversed;
 
-              List<ChatListViewItem> chatListViewItem = [];
+              for (var user in users) {
+                if (user.data()['uid'] != _auth.currentUser.uid) {
+                  //message.data()['sender_UID']
+                  for (var message in messages) {
+                    if ((message.data()['sender_UID'] ==
+                                _auth.currentUser.uid &&
+                            message.data()['receiver_UID'] ==
+                                user.data()['uid']) ||
+                        (message.data()['receiver_UID'] ==
+                                _auth.currentUser.uid &&
+                            message.data()['sender_UID'] ==
+                                user.data()['uid'])) {
+                      String uid = '';
+                      if (message.data()['sender_UID'] ==
+                          _auth.currentUser.uid) {
+                        uid = message.data()['receiver_UID'];
+                      } else {
+                        uid = user.data()['uid'];
+                      }
 
-              final chatListItems = ChatListViewItem(
-                hasUnreadMessage: true,
-                image: 'assets/images/profile/male.jpg',
-                lastMessage:
-                    "Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-                name: "Bree Jarvis",
-                newMesssageCount: 8,
-                time: "19:27 PM",
-              );
-              chatListViewItem.add(chatListItems);
+                      int msgCount = 0;
+
+                      if (message.data()['receiver_UID'] ==
+                          _auth.currentUser.uid) {
+                        for (var message in messages) {
+                          if (message.data()['receiver_UID'] ==
+                                  _auth.currentUser.uid &&
+                              message.data()['sender_UID'] ==
+                                  user.data()['uid'] &&
+                              message.data()['read'] == false) {
+                            msgCount = msgCount + 1;
+                          }
+                        }
+                      }
+
+                      final chatListItems = ChatListViewItem(
+                        uid: uid,
+                        hasUnreadMessage: true,
+                        image:
+                            'http://clipart-library.com/images_k/male-silhouette-profile/male-silhouette-profile-12.png',
+                        lastMessage: message.data()['text'],
+                        name: user.data()['name'],
+                        newMesssageCount: msgCount,
+                        time:
+                            readTimestamp(message.data()['sent_time'].seconds),
+                      );
+                      chatListViewItem.add(chatListItems);
+                      break;
+                    }
+                  }
+                }
+              }
+
+              // Sorting string by comparing the length
+              chatListViewItem.sort((a, b) => a.time.compareTo(b.time));
               return ListView(
                 children: chatListViewItem,
               );
             });
-      },
-    );
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('messages')
-          // .where(field)
-          .orderBy('sent_time')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: kPrimaryColor,
-            ),
-          );
-        }
-        final messages = snapshot.data.docs.reversed;
-
-        List<MessageBubble> messageBubbles = [];
-        for (var message in messages) {
-          final messageSender_UID = message.data()['sender_UID'] ?? '';
-          final messageReceiver_UID = message.data()['receiver_UID'] ?? '';
-
-          /* if ((messageSender_UID == loggedInUser.uid &&
-                  messageReceiver_UID == receiverUID) ||
-              (messageReceiver_UID == loggedInUser.uid &&
-                  messageSender_UID == receiverUID)) */
-          {
-            final messageText = message.data()['text'] ?? '';
-            //final messageSender = message.data()['sender'] ?? '';
-            final currentUser = loggedInUser.uid ?? '';
-
-            final messageBubble = MessageBubble(
-              text: messageText,
-              isMe: currentUser == messageSender_UID,
-            );
-
-            messageBubbles.add(messageBubble);
-          }
-        }
-        return Expanded(
-          child: ListView(
-            reverse: true,
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            children: messageBubbles,
-          ),
-        );
       },
     );
   }
@@ -158,15 +159,17 @@ class ChatListViewItem extends StatelessWidget {
   final String time;
   final bool hasUnreadMessage;
   final int newMesssageCount;
-  ChatListViewItem({
-    Key key,
-    this.image,
-    this.name,
-    this.lastMessage,
-    this.time,
-    this.hasUnreadMessage,
-    this.newMesssageCount,
-  }) : super(key: key);
+  final String uid;
+  ChatListViewItem(
+      {Key key,
+      this.image,
+      this.name,
+      this.lastMessage,
+      this.time,
+      this.hasUnreadMessage,
+      this.newMesssageCount,
+      this.uid})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -191,14 +194,15 @@ class ChatListViewItem extends StatelessWidget {
                     style: TextStyle(fontSize: 12),
                   ),
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage(image),
+                    backgroundImage: NetworkImage(image),
+                    backgroundColor: kPrimaryLightColor,
                   ),
                   trailing: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        time,
+                        time ?? '',
                         style: TextStyle(fontSize: 12),
                       ),
                       hasUnreadMessage
@@ -213,7 +217,7 @@ class ChatListViewItem extends StatelessWidget {
                               )),
                               child: Center(
                                   child: Text(
-                                newMesssageCount.toString(),
+                                newMesssageCount.toString() ?? '',
                                 style: TextStyle(fontSize: 11),
                               )),
                             )
@@ -221,11 +225,12 @@ class ChatListViewItem extends StatelessWidget {
                     ],
                   ),
                   onTap: () {
-                    Navigator.push(
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    Navigator.push<dynamic>(
                       context,
-                      MaterialPageRoute(//todo
-                          // builder: (context) => (),
-                          ),
+                      MaterialPageRoute<dynamic>(
+                          builder: (BuildContext context) => ChatScreen(uid),
+                          fullscreenDialog: true),
                     );
                   },
                 ),
@@ -241,15 +246,9 @@ class ChatListViewItem extends StatelessWidget {
       ),
       secondaryActions: <Widget>[
         IconSlideAction(
-          caption: 'Archive',
-          color: Colors.blue,
-          icon: Icons.archive,
-          onTap: () {},
-        ),
-        IconSlideAction(
-          caption: 'Share',
-          color: Colors.indigo,
-          icon: Icons.share,
+          caption: 'Delete',
+          color: Colors.red,
+          icon: Icons.delete,
           onTap: () {},
         ),
       ],
@@ -257,120 +256,31 @@ class ChatListViewItem extends StatelessWidget {
   }
 }
 
-class MessageBubble extends StatelessWidget {
-  MessageBubble({this.text, this.isMe});
+String readTimestamp(int timestamp) {
+  var now = DateTime.now();
+  var format = DateFormat('HH:mm a');
+  var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  var diff = now.difference(date);
+  var time = '';
 
-  //final String sender;
-  final String text;
-  final bool isMe;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: <Widget>[
-          /*   Text(
-            sender,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.black54,
-            ),
-          ),*/
-          Material(
-            borderRadius: isMe
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0))
-                : BorderRadius.only(
-                    bottomLeft: Radius.circular(30.0),
-                    bottomRight: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-            elevation: 5.0,
-            color: isMe ? kPrimaryColor : Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: isMe ? Colors.white : Colors.black54,
-                  fontSize: 15.0,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  if (diff.inSeconds <= 0 ||
+      diff.inSeconds > 0 && diff.inMinutes == 0 ||
+      diff.inMinutes > 0 && diff.inHours == 0 ||
+      diff.inHours > 0 && diff.inDays == 0) {
+    time = format.format(date);
+  } else if (diff.inDays > 0 && diff.inDays < 7) {
+    if (diff.inDays == 1) {
+      time = diff.inDays.toString() + ' DAY AGO';
+    } else {
+      time = diff.inDays.toString() + ' DAYS AGO';
+    }
+  } else {
+    if (diff.inDays == 7) {
+      time = (diff.inDays / 7).floor().toString() + ' WEEK AGO';
+    } else {
+      time = (diff.inDays / 7).floor().toString() + ' WEEKS AGO';
+    }
   }
-}
 
-/*
-ChatListViewItem(
-hasUnreadMessage: true,
-image: AssetImage('assets/images/person1.jpg'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Bree Jarvis",
-newMesssageCount: 8,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: true,
-image: AssetImage('assets/images/person2.png'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Alex",
-newMesssageCount: 5,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: false,
-image: AssetImage('assets/images/person3.jpg'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Carson Sinclair",
-newMesssageCount: 0,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: false,
-image: AssetImage('assets/images/person4.png'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Lucian Guerra",
-newMesssageCount: 0,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: false,
-image: AssetImage('assets/images/person5.jpg'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Sophia-Rose Bush",
-newMesssageCount: 0,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: false,
-image: AssetImage('assets/images/person6.jpg'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Mohammad",
-newMesssageCount: 0,
-time: "19:27 PM",
-),
-ChatListViewItem(
-hasUnreadMessage: false,
-image: AssetImage('assets/images/person7.jpg'),
-lastMessage:
-"Lorem ipsum dolor sit amet. Sed pharetra ante a blandit ultrices.",
-name: "Jimi Cooke",
-newMesssageCount: 0,
-time: "19:27 PM",
-),
-*/
+  return time;
+}
