@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+final _firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -47,6 +49,18 @@ Future<String> signInWithGoogle() async {
     assert(user.uid == currentUser.uid);
 
     print('signInWithGoogle succeeded: $user');
+
+    var collectionRef = _firestore.collection('users');
+    var doc = await collectionRef.doc(user.uid).get();
+    if (!doc.exists) {
+      //doesn't exist
+      _firestore.collection('users').add({
+        'uid': user.uid,
+        'name': user.email.split('@')[0],
+        'photo': 'assets/images/profile/Male.png',
+        'Sex': '',
+      });
+    }
 
     return '$user';
   }

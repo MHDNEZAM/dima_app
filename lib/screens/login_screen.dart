@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:dima_app/utilities/constants.dart';
@@ -14,6 +15,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+final _firestore = FirebaseFirestore.instance;
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -93,6 +96,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               email: email, password: password);
                           if (user != null) {
                             firebaseAuthenticationEmail = email;
+
+                            var collectionRef = _firestore.collection('users');
+                            var doc =
+                                await collectionRef.doc(user.user.uid).get();
+                            if (!doc.exists) {
+                              //doesn't exist
+                              _firestore.collection('users').add({
+                                'uid': user.user.uid,
+                                'name': user.user.email.split('@')[0],
+                                'photo': 'assets/images/profile/Male.png',
+                                'Sex': '',
+                              });
+                            }
+
                             Navigator.pushNamed(context, PropertiesScreen.id);
                           } else {
                             showNormalDialog(
@@ -135,6 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             //await signInWithGoogle();
                             signInWithGoogle().then((result) {
                               if (result != null) {
+                                //todo
+
                                 Navigator.pushNamed(
                                     context, PropertiesScreen.id);
                               }

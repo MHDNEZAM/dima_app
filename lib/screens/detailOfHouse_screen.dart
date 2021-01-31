@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dima_app/utilities/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../models/hotel_list_data.dart';
+import 'chat_screen.dart';
 
 class DetailOfHouse extends StatefulWidget {
   static const String id = 'DetailOfHouse_screen';
@@ -227,7 +228,16 @@ class _DetailOfHouseState extends State<DetailOfHouse> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            Navigator.push<dynamic>(
+                              context,
+                              MaterialPageRoute<dynamic>(
+                                  builder: (BuildContext context) =>
+                                      ChatScreen(houseObject.ownerId),
+                                  fullscreenDialog: true),
+                            );
+                          },
                           color: kPrimaryColor,
                         )
                       ],
@@ -275,14 +285,14 @@ class _DetailOfHouseState extends State<DetailOfHouse> {
                             Row(
                               children: <Widget>[
                                 Icon(
-                                  Icons.local_offer,
+                                  Icons.pool,
                                   color: Colors.green,
                                 ),
                                 SizedBox(
                                   width: 4,
                                 ),
                                 Text(
-                                  "Bed",
+                                  "pool",
                                   style: TextStyle(
                                       color: Colors.grey[600],
                                       fontWeight: FontWeight.w500),
@@ -293,7 +303,7 @@ class _DetailOfHouseState extends State<DetailOfHouse> {
                               children: <Widget>[
                                 Icon(
                                   Icons.videogame_asset,
-                                  color: Colors.green,
+                                  color: kPrimaryColor,
                                 ),
                                 SizedBox(
                                   width: 4,
@@ -306,124 +316,6 @@ class _DetailOfHouseState extends State<DetailOfHouse> {
                                 )
                               ],
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.wifi,
-                                  color: Colors.green,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  "Wifi",
-                                  style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.local_offer,
-                                  color: kPrimaryColor,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  "Bed",
-                                  style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.videogame_asset,
-                                  color: Colors.green,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  "T. Tennis",
-                                  style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.wifi,
-                                  color: kPrimaryColor,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  "Wifi",
-                                  style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500),
-                                )
-                              ],
-                            ),
-                            /*  Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.local_offer,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      "Bed",
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.videogame_asset,
-                                      color: Colors.green,
-                                    ),
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      "T. Tennis",
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500),
-                                    )
-                                  ],
-                                ),*/
                           ],
                         ),
                       ],

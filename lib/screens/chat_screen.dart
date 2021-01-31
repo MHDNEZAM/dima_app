@@ -8,19 +8,24 @@ import 'package:firebase_core/firebase_core.dart';
 
 final _firestore = FirebaseFirestore.instance;
 User loggedInUser;
-String receiverUID = '3Wj3IvH9L7V6iNrQ99TGPcjRFDo1';
+//String receiverUID = '3Wj3IvH9L7V6iNrQ99TGPcjRFDo1';
 
 class ChatScreen extends StatefulWidget {
   static const String id = 'chat_screen';
+  final String receiverUID;
+  ChatScreen(this.receiverUID);
+
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatScreenState createState() => _ChatScreenState(receiverUID);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final String receiverUID;
+  _ChatScreenState(this.receiverUID);
   final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
 
-  String messageText;
+  String messageText = '';
 
   @override
   void initState() {
@@ -34,23 +39,23 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        actions: <Widget>[
+        /*actions: <Widget>[
           IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
                 // _auth.signOut();
                 Navigator.pop(context);
               }),
-        ],
+        ],*/
         title: Text('⚡️Chat'),
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: kPrimaryColor,
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            MessagesStream(),
+            MessagesStream(receiverUID),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -67,6 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   FlatButton(
                     onPressed: () {
+                      if (messageText == '') return;
                       messageTextController.clear();
                       _firestore.collection('messages').add({
                         'sent_time': DateTime.now(),
@@ -74,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         'sender_UID': loggedInUser.uid,
                         'receiver_UID': receiverUID,
                       });
+                      messageText = '';
                     },
                     child: Text(
                       'Send',
@@ -91,6 +98,9 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessagesStream extends StatelessWidget {
+  final String receiverUID;
+  MessagesStream(this.receiverUID);
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -100,7 +110,7 @@ class MessagesStream extends StatelessWidget {
         if (!snapshot.hasData) {
           return Center(
             child: CircularProgressIndicator(
-              backgroundColor: Colors.lightBlueAccent,
+              backgroundColor: kPrimaryColor,
             ),
           );
         }
@@ -172,7 +182,7 @@ class MessageBubble extends StatelessWidget {
                     topRight: Radius.circular(30.0),
                   ),
             elevation: 5.0,
-            color: isMe ? Colors.lightBlueAccent : Colors.white,
+            color: isMe ? kPrimaryColor : Colors.white,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dima_app/screens/listOfHouse_screen.dart';
 import 'package:dima_app/utilities/constants.dart';
+import 'package:dima_app/screens/chat_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
@@ -12,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final List<Widget> _children = [
     ListOfHouse(),
-    ListOfHouse(),
+    ChatListScreen(),
     ListOfHouse(),
   ];
   @override
