@@ -33,6 +33,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       child: Scaffold(
         //backgroundColor: Settings.isDarkMode ? Colors.grey[900] : MyColors.blue,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           leading: null,
           backgroundColor: kPrimaryColor,
           elevation: 0,
@@ -91,7 +92,15 @@ class MessagesListStream extends StatelessWidget {
               for (var user in users) {
                 if (user.data()['uid'] != _auth.currentUser.uid) {
                   //message.data()['sender_UID']
+
                   for (var message in messages) {
+                    //print("sender_UID" + message.data()['sender_UID']);
+                    //print("_auth.currentUser.uid" + _auth.currentUser.uid);
+
+                    //print("receiver_UID" + message.data()['receiver_UID']);
+                    //print(" user.data()['uid'])" + user.data()['uid']);
+                    //print("-----------------------------------------------");
+
                     if ((message.data()['sender_UID'] ==
                                 _auth.currentUser.uid &&
                             message.data()['receiver_UID'] ==
@@ -100,6 +109,8 @@ class MessagesListStream extends StatelessWidget {
                                 _auth.currentUser.uid &&
                             message.data()['sender_UID'] ==
                                 user.data()['uid'])) {
+                      //start
+                      print('start s');
                       String uid = '';
                       if (message.data()['sender_UID'] ==
                           _auth.currentUser.uid) {
@@ -135,6 +146,7 @@ class MessagesListStream extends StatelessWidget {
                             readTimestamp(message.data()['sent_time'].seconds),
                       );
                       chatListViewItem.add(chatListItems);
+
                       break;
                     }
                   }
@@ -142,7 +154,7 @@ class MessagesListStream extends StatelessWidget {
               }
 
               // Sorting string by comparing the length
-              chatListViewItem.sort((a, b) => a.time.compareTo(b.time));
+              //chatListViewItem.sort((a, b) => a.time.compareTo(b.time));
               return ListView(
                 children: chatListViewItem,
               );

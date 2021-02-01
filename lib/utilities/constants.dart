@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-const kPrimaryColor = Color(0xFF6F35A5);
-const kPrimaryLightColor = Color(0xFFF1E6FF);
+Color kPrimaryColor = Color(0xFF6F35A5);
+Color kPrimaryLightColor = Color(0xFFF1E6FF);
 const kBackgroundColor = Color(0xFFFFFFFF);
 const kScaffoldBackgroundColor = Color(0xFFF6F6F6);
 const kErrorColor = Color(0xFFB00020);
@@ -86,7 +86,7 @@ const kBodyTextStyle = TextStyle(
 
 // chat screen
 //-------------
-const kSendButtonTextStyle = TextStyle(
+TextStyle kSendButtonTextStyle = TextStyle(
   color: kPrimaryColor,
   fontWeight: FontWeight.bold,
   fontSize: 18.0,
@@ -98,7 +98,7 @@ const kMessageTextFieldDecoration = InputDecoration(
   border: InputBorder.none,
 );
 
-const kMessageContainerDecoration = BoxDecoration(
+BoxDecoration kMessageContainerDecoration = BoxDecoration(
   border: Border(
     top: BorderSide(color: kPrimaryLightColor, width: 2.0),
   ),

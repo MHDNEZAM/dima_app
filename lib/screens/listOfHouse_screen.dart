@@ -40,45 +40,20 @@ class _ListOfHouseState extends State<ListOfHouse> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          //head bar
-          Container(
-            margin: EdgeInsets.only(left: 16, right: 16, top: 32),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    color: kPrimaryColor,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      // houseList2 = houseList;
-                    });
-                  },
-                ),
-                CircleAvatar(
-                  child: ClipRRect(
-                    child: Image.asset(
-                      "assets/user.jpg",
-                      fit: BoxFit.contain,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                )
-              ],
-            ),
-          ),
-          // Search bar
-          getSearchFilterBarUI(context),
-          // Search and filter bar
-          getSearchFilterResultsBarUI(context),
-          getHouseViewList(houseList),
-          //HousesStream(),
-          // futureHouseListView,
-        ],
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            //head bar
+
+            // Search bar
+            getSearchFilterBarUI(context),
+            // Search and filter bar
+            getSearchFilterResultsBarUI(context),
+            getHouseViewList(houseList),
+            //HousesStream(),
+            // futureHouseListView,
+          ],
+        ),
       ),
     );
   }

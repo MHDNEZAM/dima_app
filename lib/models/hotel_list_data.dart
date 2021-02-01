@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class HotelListData {
   HotelListData({
     this.imagePath = '',
@@ -77,8 +79,10 @@ class HouseListData {
     this.rating = 4.5,
     this.perNight = 180,
     this.ownerId = '',
+    this.houseUid = '',
   });
 
+  String houseUid;
   String ownerId;
   String imagesList;
   String imagePath;
@@ -91,29 +95,29 @@ class HouseListData {
 
   static List<HouseListData> houseList = <HouseListData>[
     HouseListData(
-      imagesList:
-          'assets/hotel/hotel_1.png assets/hotel/hotel_1.png assets/hotel/hotel_1.png',
-      imagePath: 'assets/hotel/hotel_1.png',
-      titleTxt: 'Grand Royal Hotel',
-      subTxt: 'Wembley, London',
-      dist: 2.0,
-      reviews: 80,
-      rating: 4.4,
-      perNight: 180,
-      ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
-    ),
+        imagesList:
+            'assets/hotel/hotel_1.png assets/hotel/hotel_1.png assets/hotel/hotel_1.png',
+        imagePath: 'assets/hotel/hotel_1.png',
+        titleTxt: 'Grand Royal Hotel',
+        subTxt: 'Wembley, London',
+        dist: 2.0,
+        reviews: 80,
+        rating: 4.4,
+        perNight: 180,
+        ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
+        houseUid: '4FLeph63noHnY646f7HO'),
     HouseListData(
-      imagesList:
-          'assets/hotel/hotel_2.png assets/hotel/hotel_2.png assets/hotel/hotel_2.png',
-      imagePath: 'assets/hotel/hotel_2.png',
-      titleTxt: 'Queen Hotel',
-      subTxt: 'Wembley, London',
-      dist: 4.0,
-      reviews: 74,
-      rating: 4.5,
-      perNight: 200,
-      ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
-    ),
+        imagesList:
+            'assets/hotel/hotel_2.png assets/hotel/hotel_2.png assets/hotel/hotel_2.png',
+        imagePath: 'assets/hotel/hotel_2.png',
+        titleTxt: 'Queen Hotel',
+        subTxt: 'Wembley, London',
+        dist: 4.0,
+        reviews: 74,
+        rating: 4.5,
+        perNight: 200,
+        ownerId: 'ZE2oKBB1xceePBTNAYM6RcO2sRM2',
+        houseUid: '4FLeph63noHnY646f7HO'),
     HouseListData(
       imagesList:
           'assets/hotel/hotel_3.png assets/hotel/hotel_3.png assets/hotel/hotel_3.png',

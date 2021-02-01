@@ -4,6 +4,7 @@ import 'package:dima_app/utilities/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../models/hotel_list_data.dart';
 import 'chat_screen.dart';
+import 'house_reserve_screen.dart';
 
 class DetailOfHouse extends StatefulWidget {
   static const String id = 'DetailOfHouse_screen';
@@ -235,6 +236,28 @@ class _DetailOfHouseState extends State<DetailOfHouse> {
                               MaterialPageRoute<dynamic>(
                                   builder: (BuildContext context) =>
                                       ChatScreen(houseObject.ownerId),
+                                  fullscreenDialog: true),
+                            );
+                          },
+                          color: kPrimaryColor,
+                        ),
+                        VerticalDivider(),
+                        FlatButton(
+                          child: Text(
+                            "Reserve",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400),
+                          ),
+                          onPressed: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            Navigator.push<dynamic>(
+                              context,
+                              //todo change to reserve page
+
+                              MaterialPageRoute<dynamic>(
+                                  builder: (BuildContext context) =>
+                                      HouseReserveScreen(houseObject.houseUid),
                                   fullscreenDialog: true),
                             );
                           },

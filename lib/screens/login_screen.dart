@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dima_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:dima_app/utilities/constants.dart';
@@ -109,7 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   .set({
                                 'uid': user.user.uid,
                                 'name': user.user.email.split('@')[0],
-                                'photo': 'assets/images/profile/Male.png',
+                                //'photo': 'assets/images/profile/Male.png',
+                                'profileImage':
+                                    'https://firebasestorage.googleapis.com/v0/b/property-6a8fc.appspot.com/o/uploads%2Fprofile%2FprofileImage.png?alt=media&token=2d073862-6fcc-451a-934f-67aac96860c9',
                                 'Sex': '',
                               });
                             }
@@ -134,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               print(doc);
                             }
 */
-                            Navigator.pushNamed(context, PropertiesScreen.id);
+                            Navigator.pushNamed(context, HomeScreen.id);
                           } else {
                             showNormalDialog(
                                 context, '', 'wrong email or password');
@@ -176,8 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //await signInWithGoogle();
                             signInWithGoogle().then((result) {
                               if (result != null) {
-                                Navigator.pushNamed(
-                                    context, PropertiesScreen.id);
+                                Navigator.pushNamed(context, HomeScreen.id);
                               }
                             });
                           },

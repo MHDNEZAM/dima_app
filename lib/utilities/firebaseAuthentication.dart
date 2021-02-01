@@ -57,7 +57,8 @@ Future<String> signInWithGoogle() async {
       _firestore.collection("users").doc(user.uid).set({
         'uid': user.uid,
         'name': user.email.split('@')[0],
-        'photo': 'assets/images/profile/Male.png',
+        'profileImage':
+            'https://firebasestorage.googleapis.com/v0/b/property-6a8fc.appspot.com/o/uploads%2Fprofile%2FprofileImage.png?alt=media&token=2d073862-6fcc-451a-934f-67aac96860c9',
         'Sex': '',
       });
     }
