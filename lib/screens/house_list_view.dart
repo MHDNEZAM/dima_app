@@ -4,6 +4,7 @@ import 'package:dima_app/utilities/constants.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'detailOfHouse_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HouseListView extends StatelessWidget {
   const HouseListView(
@@ -55,9 +56,18 @@ class HouseListView extends StatelessWidget {
                       AspectRatio(
                         aspectRatio: 2,
                         child: Image.asset(
-                          houseData.imagePath,
+                          '${houseData.imagePathAssets}',
                           fit: BoxFit.cover,
-                        ),
+                        )
+                        /* CachedNetworkImage(
+                          imageUrl: houseData.imagePath,
+                          fit: BoxFit.cover,
+                          //placeholder: (context, url) =>
+                          //new CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              new Icon(Icons.error),
+                        )*/
+                        ,
                       ),
                       Container(
                         color: kBackgroundColor,
@@ -150,7 +160,7 @@ class HouseListView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    '\$${houseData.perNight}',
+                                    'USD ${houseData.perNight.toInt().toString()}',
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -158,7 +168,7 @@ class HouseListView extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    '/per night',
+                                    '/per day',
                                     style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey.withOpacity(0.8)),

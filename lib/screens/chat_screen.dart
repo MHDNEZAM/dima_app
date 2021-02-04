@@ -39,15 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        /*actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                // _auth.signOut();
-                Navigator.pop(context);
-              }),
-        ],*/
-        title: Text('⚡️Chat'),
+        title: Text('Chat'),
         backgroundColor: kPrimaryColor,
       ),
       body: SafeArea(
@@ -101,7 +93,6 @@ class _ChatScreenState extends State<ChatScreen> {
 class MessagesStream extends StatelessWidget {
   final String receiverUID;
   MessagesStream(this.receiverUID);
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -117,31 +108,25 @@ class MessagesStream extends StatelessWidget {
         }
         final messages = snapshot.data.docs.reversed;
         List<MessageBubble> messageBubbles = [];
-
         for (var message in messages) {
           final messageSender_UID = message.data()['sender_UID'] ?? '';
           final messageReceiver_UID = message.data()['receiver_UID'] ?? '';
-
           if ((messageSender_UID == loggedInUser.uid &&
                   messageReceiver_UID == receiverUID) ||
               (messageReceiver_UID == loggedInUser.uid &&
                   messageSender_UID == receiverUID)) {
             final messageText = message.data()['text'] ?? '';
-            //final messageSender = message.data()['sender'] ?? '';
             final currentUser = loggedInUser.uid ?? '';
-
             if (messageReceiver_UID == loggedInUser.uid &&
                 messageSender_UID == receiverUID) {
               _firestore.collection("messages").doc(message.id).update({
                 'read': true,
               });
             }
-
             final messageBubble = MessageBubble(
               text: messageText,
               isMe: currentUser == messageSender_UID,
             );
-
             messageBubbles.add(messageBubble);
           }
         }
@@ -172,13 +157,6 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          /*   Text(
-            sender,
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.black54,
-            ),
-          ),*/
           Material(
             borderRadius: isMe
                 ? BorderRadius.only(

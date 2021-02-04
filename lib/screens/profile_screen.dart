@@ -10,6 +10,8 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:dima_app/utilities/firebaseAuthentication.dart';
+import 'package:dima_app/screens/login_screen.dart';
 
 final _firestore = FirebaseFirestore.instance;
 // create some values
@@ -71,10 +73,19 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Icon(
-                                      Icons.arrow_back_ios,
-                                      color: Colors.black,
-                                      size: 22.0,
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.logout,
+                                        color: Colors.black,
+                                        size: 22.0,
+                                      ),
+                                      onPressed: () {
+                                        signOutGoogle();
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            LoginScreen.id,
+                                            (r) => false);
+                                      },
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(left: 25.0),
@@ -260,6 +271,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           decoration: const InputDecoration(
                                               hintText: "Enter Mobile Number"),
                                           enabled: !_status,
+                                          autofocus: !_status,
+                                          controller: TextEditingController()
+                                            ..text =
+                                                snapshot.data.data()['mobile'],
                                         ),
                                       ),
                                     ],

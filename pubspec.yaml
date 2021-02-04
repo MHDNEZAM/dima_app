@@ -48,6 +48,14 @@ dependencies:
   image_picker: ^0.6.7+22
   firebase: ^5.0.4
   syncfusion_flutter_datepicker: ^18.4.39-beta
+  http_auth: ^0.3.1
+  webview_flutter: ^1.0.7
+  shared_preferences: ^0.5.12+4
+  cached_network_image: ^2.5.0
+  razorpay_flutter: 1.1.1
+  toast: ^0.1.5
+  fluttertoast: ^7.1.6
+  rflutter_alert: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +77,14 @@ flutter:
     - assets/hotel/
     - assets/images/
     - assets/images/profile/
+    - assets/images/houses/1/
+    - assets/images/houses/2/
+    - assets/images/houses/3/
+    - assets/images/houses/4/
+    - assets/images/houses/5/
+    - assets/images/houses/6/
+    - assets/images/houses/7/
+    - assets/images/houses/8/
     - assets/icons/
     - assets/
   # An image asset can refer to one or more resolution-specific "variants", see

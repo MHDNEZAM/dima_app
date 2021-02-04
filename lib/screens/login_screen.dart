@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:dima_app/utilities/constants.dart';
 import 'package:dima_app/utilities/firebaseAuthentication.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'login_screen.dart';
 import 'sign_up_screen.dart';
 import 'properties_screen.dart';
@@ -16,6 +16,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'test.dart';
 
 //final _firestore = FirebaseFirestore.instance;
 final _firestore = FirebaseFirestore.instance;
@@ -28,7 +29,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool showSpinner = false;
-  //final _auth = FirebaseAuth.instance;
   String email;
   String password;
   @override
@@ -51,35 +51,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: size.width * 0.35,
                 ),
               ),
-              /* Positioned(
-              bottom: 0,
-              right: 0,
-              child: Image.asset(
-                "assets/images/login_bottom.png",
-                width: size.width * 0.4,
-              ),
-            ),*/
               SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    /* Text(
-                    "LOGIN",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),*/
                     SizedBox(height: size.height * 0.03),
-                    SvgPicture.asset(
-                      "assets/icons/login.svg",
+                    Image.asset(
+                      "assets/images/loginImg.jpg",
                       height: size.height * 0.35,
+                      width: size.width * 0.8,
                     ),
                     SizedBox(height: size.height * 0.03),
                     RoundedInputField(
+                      key: new Key('email'),
                       hintText: "Your Email",
                       onChanged: (value) {
                         email = value;
                       },
                     ),
                     RoundedPasswordField(
+                      key: new Key('password'),
                       onChanged: (value) {
                         password = value;
                       },
@@ -117,26 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                             }
 
-                            /*
-
-                            var collectionRef = _firestore
-                                .collection('users')
-                                .where("uid", isEqualTo: user.user.uid);
-                            var doc = await collectionRef.get();
-
-                            if (doc == null) {
-                              //doesn't exist
-                              print('gg');
-                              _firestore.collection('users').add({
-                                'uid': user.user.uid,
-                                'name': user.user.email.split('@')[0],
-                                'photo': 'assets/images/profile/Male.png',
-                                'Sex': '',
-                              });
-                            } else {
-                              print(doc);
-                            }
-*/
                             Navigator.pushNamed(context, HomeScreen.id);
                           } else {
                             showNormalDialog(
@@ -150,8 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             showSpinner = false;
                           });
-                          showNormalDialog(context, '', e.toString());
-                          print(e);
+                          var error = e.toString();
+                          print(error);
+                          if (error.contains('Failed assertion') ||
+                              error.contains('Given String is empty or null')) {
+                            showNormalDialog(context, '',
+                                'Email and Password Can not be null');
+                          } else if (error.contains(']')) {
+                            showNormalDialog(context, '', error.split("]")[1]);
+                          } else if (error.contains(']')) {}
                         }
                       },
                     ),
@@ -165,14 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SocalIcon(
+                        /* SocalIcon(
                           iconSrc: "assets/icons/facebook.svg",
                           press: () {},
                         ),
                         SocalIcon(
                           iconSrc: "assets/icons/twitter.svg",
                           press: () {},
-                        ),
+                        ),*/
                         SocalIcon(
                           iconSrc: "assets/icons/google-plus.svg",
                           press: () async {
@@ -267,14 +245,31 @@ class SocalIcon extends StatelessWidget {
 }
 
 void showNormalDialog(BuildContext context, String title, String content) {
-  showDialog(
+  Alert(
+    context: context,
+    type: AlertType.warning,
+    title: title,
+    desc: content,
+    buttons: [
+      DialogButton(
+        child: Text(
+          "Ok",
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        onPressed: () => Navigator.pop(context),
+        color: kPrimaryColor,
+        radius: BorderRadius.circular(0.0),
+      ),
+    ],
+  ).show();
+  /*showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
           content: Text(content),
         );
-      });
+      });*/
 }
 
 /*

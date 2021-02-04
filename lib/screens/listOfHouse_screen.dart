@@ -11,6 +11,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 final _firestore = FirebaseFirestore.instance;
+List<HouseListData> houseList =
+    new List<HouseListData>(); //new List<HouseListData>();
+List<HouseListData> DefaultHouseList = new List<HouseListData>();
+int housesNumber = HouseListData.houseList.length;
+int DefaultHouseNumber;
 
 class ListOfHouse extends StatefulWidget {
   static const String id = 'ListOfHouse_screen';
@@ -23,18 +28,51 @@ class _ListOfHouseState extends State<ListOfHouse> {
   //AnimationController animationController;
   final ScrollController _scrollController = ScrollController();
   final houseController = TextEditingController();
-
-  List<HouseListData> houseList =
-      HouseListData.houseList; //new List<HouseListData>();
-  List<HouseListData> DefaultHouseList = HouseListData.houseList;
-  int housesNumber = HouseListData.houseList.length;
+  String searchText = '';
+  var _controller = TextEditingController();
   //HouseListData houseData = new HouseListData();
   //Widget futureHouseListView = new Widget();
 
   @override
   void initState() {
     super.initState();
+    getHouses();
+    //getData();
     // futureHouseListView = HousesStream();
+  }
+
+  void getHouses() {
+    DefaultHouseList.clear();
+    _firestore.collection('houses').get().then((QuerySnapshot snapshot) {
+      snapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
+        var data = documentSnapshot.data();
+        DefaultHouseList.add(HouseListData(
+          imagesList: data['imagesList'],
+          imagePath: data['imagePath'],
+          titleTxt: data['titleTxt'],
+          subTxt: data['subTxt'],
+          dist: data['dist'],
+          reviews: data['reviews'],
+          rating: data['rating'],
+          perNight: data['perNight'],
+          ownerId: data['ownerId'],
+          houseUid: data['houseUid'],
+          haveWifi: data['haveWifi'],
+          havePool: data['havePool'],
+          haveTennis: data['haveTennis'],
+          maxPeople: data['maxPeople'],
+          bedNumber: data['bedNumber'],
+          bathroomNumber: data['bathroomNumber'],
+          imagePathAssets: data['imagePathAssets'],
+          imagesListAssets: data['imagesListAssets'],
+        ));
+      });
+      setState(() {
+        housesNumber = DefaultHouseList.length;
+        houseList = DefaultHouseList;
+        DefaultHouseNumber = DefaultHouseList.length;
+      });
+    });
   }
 
   @override
@@ -50,6 +88,7 @@ class _ListOfHouseState extends State<ListOfHouse> {
             // Search and filter bar
             getSearchFilterResultsBarUI(context),
             getHouseViewList(houseList),
+
             //HousesStream(),
             // futureHouseListView,
           ],
@@ -62,12 +101,23 @@ class _ListOfHouseState extends State<ListOfHouse> {
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       child: TextField(
+          controller: _controller,
           decoration: InputDecoration(
               enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey[300])),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.grey[500],
+              prefixIcon: IconButton(
+                icon: Icon(
+                  searchText == '' ? Icons.search : Icons.clear,
+                  color: Colors.grey[500],
+                ),
+                onPressed: () {
+                  setState(() {
+                    houseList = DefaultHouseList;
+                    housesNumber = houseList.length;
+                    searchText = '';
+                  });
+                  _controller.clear();
+                },
               ),
               suffixIcon: IconButton(
                 onPressed: () {
@@ -75,6 +125,7 @@ class _ListOfHouseState extends State<ListOfHouse> {
                   Navigator.push<dynamic>(
                     context,
                     MaterialPageRoute<dynamic>(
+                        //todo  List<HouseListData> DefaultHouseList
                         builder: (BuildContext context) => FiltersScreen(),
                         fullscreenDialog: true),
                   );
@@ -84,9 +135,10 @@ class _ListOfHouseState extends State<ListOfHouse> {
                   color: kPrimaryColor,
                 ),
               ),
-              hintText: "Karachi, Pakistan",
+              hintText: "your house name",
               focusColor: Colors.green),
           onChanged: (val) {
+            searchText = val;
             if (val == "") {
               setState(() {
                 houseList = DefaultHouseList;
@@ -120,33 +172,50 @@ class _ListOfHouseState extends State<ListOfHouse> {
       width: double.infinity,
       padding: EdgeInsets.only(left: 32, right: 32, top: 16, bottom: 16),
       color: Colors.grey[100],
-      child: Text(
-        "$housesNumber Results Found",
-        style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold),
-      ),
+      child: Row(children: [
+        Text(
+          "$housesNumber Results Found",
+          style:
+              TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold),
+        ),
+        SizedBox(width: 50),
+        IconButton(
+            icon: DefaultHouseNumber == housesNumber
+                ? Icon(Icons.clear, color: Colors.grey[100])
+                : Icon(
+                    Icons.clear,
+                    color: Colors.redAccent[100],
+                    size: 30,
+                  ),
+            onPressed: () {
+              setState(() {
+                houseList = DefaultHouseList;
+                housesNumber = houseList.length;
+              });
+            }),
+      ]),
     );
   }
 
   Widget getHouseViewList(List<HouseListData> houseList) {
     final List<Widget> houseListViews = <Widget>[];
-
-    for (int i = 0; i < houseList.length; i++) {
-      houseListViews.add(HouseListView(
-        callback: () {},
-        houseData: houseList[i],
-      ));
-    }
     return Expanded(
       child: Container(
-        child: SingleChildScrollView(
-          child: Column(
-            children: houseListViews,
-          ),
-        ),
-      ),
+          child: ListView.builder(
+              itemCount: houseList.length,
+              itemBuilder: (context, index) {
+                return HouseListView(
+                  callback: () {},
+                  houseData: houseList[index],
+                );
+              })),
     );
   }
 }
+
+/*
+*
+*
 
 class HousesStream extends StatelessWidget {
   final List<Widget> houseListViews = <Widget>[];
@@ -182,7 +251,7 @@ class HousesStream extends StatelessWidget {
             // animationController: animationController,
           ));
         }
-
+       // houseListViews
         return Expanded(
           child: Container(
             child: SingleChildScrollView(
@@ -196,3 +265,4 @@ class HousesStream extends StatelessWidget {
     );
   }
 }
+*/

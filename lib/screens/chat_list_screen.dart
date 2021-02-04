@@ -137,7 +137,7 @@ class MessagesListStream extends StatelessWidget {
                       final chatListItems = ChatListViewItem(
                         uid: uid,
                         hasUnreadMessage: true,
-                        image:
+                        image: user.data()['profileImage'] ??
                             'http://clipart-library.com/images_k/male-silhouette-profile/male-silhouette-profile-12.png',
                         lastMessage: message.data()['text'],
                         name: user.data()['name'],
@@ -269,17 +269,25 @@ class ChatListViewItem extends StatelessWidget {
 }
 
 String readTimestamp(int timestamp) {
+  print('readTimestamp');
   var now = DateTime.now();
   var format = DateFormat('HH:mm a');
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
   var diff = now.difference(date);
   var time = '';
 
+  print(now);
+  print(date);
+  print(diff);
   if (diff.inSeconds <= 0 ||
-      diff.inSeconds > 0 && diff.inMinutes == 0 ||
-      diff.inMinutes > 0 && diff.inHours == 0 ||
-      diff.inHours > 0 && diff.inDays == 0) {
+          diff.inSeconds > 0 && diff.inMinutes == 0 ||
+          diff.inMinutes > 0 && diff.inHours == 0
+      // diff.inHours > 0 && diff.inDays == 0)
+      // diff.inHours > 0 && diff.inHours - 24 > 0)
+      ) {
     time = format.format(date);
+  } else if (diff.inHours > 0 && diff.inDays == 0) {
+    time = time = diff.inHours.toString() + ' Hours AGO';
   } else if (diff.inDays > 0 && diff.inDays < 7) {
     if (diff.inDays == 1) {
       time = diff.inDays.toString() + ' DAY AGO';

@@ -1,3 +1,4 @@
+import 'package:dima_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:dima_app/utilities/constants.dart';
@@ -10,10 +11,12 @@ import 'package:dima_app/components/rounded_button.dart';
 import 'package:dima_app/components/already_have_an_account_acheck.dart';
 import 'package:dima_app/components/rounded_input_field.dart';
 import 'package:dima_app/components/rounded_password_field.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpScreen extends StatefulWidget {
   static const String id = 'signup_screen';
@@ -23,6 +26,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   //final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   bool showSpinner = false;
   String email;
   String password;
@@ -95,7 +99,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   email: email, password: password);
                           if (newUser != null) {
                             firebaseAuthenticationEmail = email;
-                            Navigator.pushNamed(context, PropertiesScreen.id);
+
+                            _firestore
+                                .collection("users")
+                                .doc(newUser.user.uid)
+                                .set({
+                              'uid': newUser.user.uid,
+                              'name': newUser.user.email.split('@')[0],
+                              'profileImage':
+                                  'https://firebasestorage.googleapis.com/v0/b/property-6a8fc.appspot.com/o/uploads%2Fprofile%2FprofileImage.png?alt=media&token=2d073862-6fcc-451a-934f-67aac96860c9',
+                              'Sex': '',
+                            });
+
+                            Navigator.pushNamed(context, HomeScreen.id);
                           }
 
                           setState(() {
@@ -105,7 +121,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           setState(() {
                             showSpinner = false;
                           });
-                          showNormalDialog(context, '', e.toString());
+
+                          var error = e.toString();
+                          print(error.split("]"));
+
+                          //String error = e.toString().split("]");
+                          showNormalDialog(context, '', error.split("]")[1]);
+
                           print(e);
                         }
                       },
@@ -126,15 +148,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-}
-
-void showNormalDialog(BuildContext context, String title, String content) {
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-        );
-      });
 }
